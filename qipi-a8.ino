@@ -828,12 +828,13 @@ void updateFirmwareFromServer() {
 
   client.print(String("GET ") + REMOTEPATH + " HTTP/1.1\r\n");
   client.print(String("Host: ") + REMOTEHOST + "\r\n");
-  client.println("Connection: close\r\n");
+  client.print("Connection: close\r\n");
   client.println();
 
   // Read the HTTP status line
   String statusLine = client.readStringUntil('\n');
   statusLine.trim();
+  LOG_PRINTF("[OTA] HTTP status: %s\n", statusLine.c_str());
   int statusCode = 0;
   if (statusLine.startsWith("HTTP/")) {
     int firstSpace = statusLine.indexOf(' ');
@@ -843,7 +844,7 @@ void updateFirmwareFromServer() {
     }
   }
   if (statusCode != 200) {
-    LOG_PRINTF("[OTA] HTTP status: %s\n", statusLine.c_str());
+    LOG_OTA("Aborting OTA due to HTTP status " + statusLine);
     client.stop();
     return;
   }

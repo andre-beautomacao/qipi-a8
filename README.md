@@ -1,4 +1,8 @@
 # Changelog
+## 2025-07-16 17:26 BRT
+- Loga a linha de status HTTP imediatamente apos a leitura e aborta com mensagem se o status nao for 200.
+- Envio do cabecalho HTTP sem linha extra em branco.
+
 
 ## 2025-07-16 16:53 BRT
 - Verifica o status HTTP do firmware durante o download; se não for 200, a atualização é abortada.
