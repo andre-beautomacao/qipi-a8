@@ -20,7 +20,6 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <ArduinoJson.h>
-#include <ElegantOTA.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/semphr.h>
 #include "network_mqtt.h"
@@ -70,7 +69,6 @@
 // ========== DEFINES: Intervalos das Tasks ==========
 #define STARTUP_DELAY_SENSORS_DEFAULT     60    // 5 minutos (seg)
 #define STARTUP_DELAY_PUBLISH_DEFAULT     600    // 10 minutos (seg)
-#define STARTUP_DELAY_OTA_DEFAULT         60     // 1 minuto (seg)
 #define SENSOR_INTERVAL_DEFAULT           10     // seg
 #define PUBLISH_INTERVAL_DEFAULT          1800   // seg
 
@@ -247,7 +245,6 @@ unsigned long startupDelaySeconds     = 60;
 unsigned long systemStartSeconds      = 0;
 unsigned long startupDelaySensors     = STARTUP_DELAY_SENSORS_DEFAULT;
 unsigned long startupDelayPublish     = STARTUP_DELAY_PUBLISH_DEFAULT;
-unsigned long startupDelayOTA         = STARTUP_DELAY_OTA_DEFAULT;
 unsigned long startupDelayGetIP       = 60; // 1 min
 
 // ----------- Contadores/sistema -----------
@@ -1126,16 +1123,6 @@ void TaskPublish(void* pvParameters) {
   }
 }
 
-
-void TaskOTA(void* pvParameters) {
-  (void)pvParameters;
-  vTaskDelay((startupDelayOTA * 1000) / portTICK_PERIOD_MS); // 1 min
-
-  for (;;) {
-    ElegantOTA.loop();
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-  }
-}
 
 void TaskFirmwareUpdate(void* pvParameters) {
   (void)pvParameters;

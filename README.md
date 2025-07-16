@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-07-16 16:50 BRT
+- Removida `TaskOTA` e a biblioteca `ElegantOTA` por não utilizar mais OTA via web.
+
+
 
 ## 2025-07-16 16:42 BRT
 - Criada a task `TaskFirmwareUpdate` para baixar e aplicar o firmware em segundo plano quando recebido `qipi/update`.
