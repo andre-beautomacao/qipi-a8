@@ -26,7 +26,7 @@ extern volatile bool eth_connected;
 extern volatile bool mqtt_connected;
 extern volatile uint8_t mqttPreferencia;
 extern volatile uint8_t mqtt_interface;
-extern char cMacAP[];
+extern char cmac_ap[20];
 extern char cMacETH[];
 extern AsyncMqttClient mqttClient;
 extern PCF8574 pcf8574_R1;
@@ -92,7 +92,7 @@ void sendDeviceMessage(const String& mensagem) {
   }
 
   DynamicJsonDocument doc(256);
-  doc["mac"] = cMacAP;
+  doc["mac"] = cmac_ap;
   doc["ip"] = ip;
   doc["mensagem"] = mensagem;
 
@@ -140,6 +140,7 @@ void beginConnection() {
   delay(100);  // Pequeno delay para garantir inicialização
   mac_ap = WiFi.softAPmacAddress(); // Ex: "14:33:5C:45:08:7D"
   mac_ap.replace(":", "");          // Ex: "14335C45087D"
+  mac_ap.toCharArray(cmac_ap, sizeof(cmac_ap));
 
   // 3. Monte o SSID definitivo
   apSSID += "_" + mac_ap;
@@ -304,7 +305,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       return;
     }
     const char* macReceived = doc["mac"];
-    if (strcmp(macReceived, cMacAP) == 0) {
+    if (strcmp(macReceived, cmac_ap) == 0) {
       if (doc.containsKey("ssid")) updateWifiSSIDInEEPROM(doc["ssid"]);
       if (doc.containsKey("senha")) updateWifiPassInEEPROM(doc["senha"]);
       if (doc.containsKey("mqtt_server")) updateMqttServerInEEPROM(doc["mqtt_server"]);
@@ -335,7 +336,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     return;
   }
   const char* macReceived = doc["mac"];
-  if (strcmp(macReceived, cMacAP) == 0) {
+  if (strcmp(macReceived, cmac_ap) == 0) {
     if (strcmp(topic, "qipi/update") == 0) {
       LOG_OTA("Nova atualização disponível");
       delay(2000);
