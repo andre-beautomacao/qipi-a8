@@ -824,6 +824,16 @@ void publishTemperatures() {
 void getFileFromServer() {
   WiFiClientSecure client;
   client.setInsecure();
+  // Remove any file stored in LittleFS to free space for the new download
+  {
+    File root = LittleFS.open("/");
+    File entry = root.openNextFile();
+    while (entry) {
+      LittleFS.remove(entry.name());
+      entry = root.openNextFile();
+    }
+    root.close();
+  }
   if (client.connect(REMOTEHOST, REMOTEPORT)) {
     LOG_OTA("Connected to server");
     client.print("GET " + String(REMOTEPATH) + " HTTP/1.1\r\n");
@@ -851,12 +861,15 @@ void getFileFromServer() {
           endOfHeaders = true;
         }
       }
+      delay(1);  // prevent watchdog reset while waiting for data
     }
     LOG_OTA("HTTP response code: " + http_response_code);
     while (client.connected()) {
       if (client.available()) {
         size_t bytesRead = client.readBytes(buffer, bufferSize);
         file.write(buffer, bytesRead);
+      } else {
+        delay(1);  // yield to keep watchdog happy
       }
     }
     file.close();
@@ -884,12 +897,14 @@ void performOTAUpdateFromLittleFS() {
   Update.writeStream(file);
   if (Update.end()) {
     LOG_OTA("Successful update");
+    file.close();
+    // Delete the firmware file to free space after a successful update
+    LittleFS.remove("/" + String(FILE_NAME));
   } else {
     LOG_OTA("Error Occurred: " + String(Update.getError()));
     file.close();
     return;
   }
-  file.close();
   LOG_OTA("Reset in 4 seconds....");
   delay(4000);
   ETH.end();  // libera o driver
