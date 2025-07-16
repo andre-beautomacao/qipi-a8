@@ -23,7 +23,7 @@ extern bool mqtt_retain;
 extern unsigned long sensorInterval;
 extern unsigned long publishInterval;
 extern volatile bool mqtt_connected;
-extern char cmac_ap[];
+extern char cmac_ap[20];
 
 // Sensor and I/O values
 extern float ph, orp, temperatura1;

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2025-07-16 13:59 BRT
+- Corrigida declaracao de `cmac_ap` com tamanho fixo para uso de `sizeof()`.
+
 ## 2025-07-16 13:51 BRT
 - Renomeada variável `cMacAP` para `cmac_ap` e atualizada em todo o código.
 - `cmac_ap` agora recebe o MAC do AP em `beginConnection()`.
