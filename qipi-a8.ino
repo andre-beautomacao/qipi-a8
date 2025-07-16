@@ -327,6 +327,7 @@ void readDigitalInputs();
 void readAnalogInputs();
 void readInputs();
 void checkSerialCommands();
+void TaskFirmwareUpdate(void* pvParameters);
 
 // Funções de gerenciamento da EEPROM e atualização de parâmetros
 void setupEEPROM();
@@ -1134,6 +1135,12 @@ void TaskOTA(void* pvParameters) {
     ElegantOTA.loop();
     vTaskDelay(10 / portTICK_PERIOD_MS);
   }
+}
+
+void TaskFirmwareUpdate(void* pvParameters) {
+  (void)pvParameters;
+  updateFirmwareFromServer();
+  vTaskDelete(NULL);
 }
 
 void resetConfig() {
