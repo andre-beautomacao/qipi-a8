@@ -26,7 +26,9 @@ extern volatile bool eth_connected;
 extern volatile bool mqtt_connected;
 extern volatile uint8_t mqttPreferencia;
 extern volatile uint8_t mqtt_interface;
+
 extern char cmac_ap[20];
+
 extern char cMacETH[];
 extern AsyncMqttClient mqttClient;
 extern PCF8574 pcf8574_R1;
