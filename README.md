@@ -1,6 +1,10 @@
 # Changelog
 
 
+
+## 2025-07-16 14:53 BRT
+- Limpeza de todos os arquivos do LittleFS antes do download OTA para evitar falta de espaço.
+
 ## 2025-07-16 14:27 BRT
 - Removido o arquivo de firmware do LittleFS antes do download e apos uma atualizacao OTA bem-sucedida para evitar falta de espaco.
 
