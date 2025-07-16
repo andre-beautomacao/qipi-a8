@@ -1,6 +1,15 @@
 # Changelog
 
 
+## 2025-07-16 15:10 BRT
+- Firmware OTA agora é baixado diretamente para a flash sem usar LittleFS, evitando erros de espaço insuficiente.
+
+## 2025-07-16 14:53 BRT
+- Limpeza de todos os arquivos do LittleFS antes do download OTA para evitar falta de espaço.
+
+## 2025-07-16 14:27 BRT
+- Removido o arquivo de firmware do LittleFS antes do download e apos uma atualizacao OTA bem-sucedida para evitar falta de espaco.
+
 ## 2025-07-16 13:59 BRT
 - Corrigida declaracao de `cmac_ap` com tamanho fixo para uso de `sizeof()`.
 
