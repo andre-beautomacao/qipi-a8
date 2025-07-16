@@ -23,7 +23,7 @@ extern bool mqtt_retain;
 extern unsigned long sensorInterval;
 extern unsigned long publishInterval;
 extern volatile bool mqtt_connected;
-extern char cMacAP[];
+extern char cmac_ap[];
 
 // Sensor and I/O values
 extern float ph, orp, temperatura1;
@@ -389,7 +389,7 @@ void serverRoutes() {
     DynamicJsonDocument doc(768);  // aumenta um pouco o buffer
 
     // Campos antigos (já existentes)
-    doc["mac_wifi"] = cMacAP;
+    doc["mac_wifi"] = cmac_ap;
     doc["nome"] = mqttClientId;
     doc["ssid"] = wifiSSID;
     doc["senha"] = wifiPass;
@@ -468,7 +468,7 @@ void serverRoutes() {
       }
       // Comentei a verificação do MAC para evitar erro ao enviar em branco!
       // const char* macReceived = doc["mac"];
-      // if (strcmp(macReceived, cMacAP) != 0 && strcmp(macReceived, cMacAP2) != 0) {
+      // if (strcmp(macReceived, cmac_ap) != 0 && strcmp(macReceived, cmac_ap2) != 0) {
       //   request->send(403, "application/json", "{\"error\":\"MAC não corresponde\"}");
       //   return;
       // }
@@ -512,7 +512,7 @@ void serverRoutes() {
 
   server.on("/statusRede", HTTP_GET, [](AsyncWebServerRequest* request) {
     DynamicJsonDocument doc(512);
-    doc["mac_wifi"] = cMacAP;
+    doc["mac_wifi"] = cmac_ap;
     doc["ssid"] = wifiSSID;
     doc["senha"] = wifiPass;
     if (WiFi.status() == WL_CONNECTED) {

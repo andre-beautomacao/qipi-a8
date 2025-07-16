@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-07-16 13:51 BRT
+- Renomeada variável `cMacAP` para `cmac_ap` e atualizada em todo o código.
+- `cmac_ap` agora recebe o MAC do AP em `beginConnection()`.
+
 
 ## 2025-07-04 18:23 UTC
 - Corrigido caminho remoto do OTA para o usuário `andre-beautomacao`.

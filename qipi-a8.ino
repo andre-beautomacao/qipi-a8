@@ -153,7 +153,7 @@ const char* http_username = HTTP_USER_DEFAULT;
 const char* http_password = HTTP_PASS_DEFAULT;
 
 
-char cMacAP[20];
+char cmac_ap[20];
 char cMacSTA[20];
 char cMacETH[20];
 
@@ -722,7 +722,7 @@ void publishAllInputs1() {
     return;
   }
   DynamicJsonDocument doc(512);
-  doc["mac"] = cMacAP;
+  doc["mac"] = cmac_ap;
   doc["ph"] = roundf(ph * 100.0f) / 100.0f;
   doc["orp"] = roundf(orp);
   doc["adc1"] = adc1_val;
@@ -761,7 +761,7 @@ void publishDigitalGroup1() {
     return;
   }
   DynamicJsonDocument doc(256);
-  doc["mac"] = cMacAP;  // usa cMacAP para identificar o primeiro dispositivo
+  doc["mac"] = cmac_ap;  // usa cmac_ap para identificar o primeiro dispositivo
   // Entradas digitais 1 a 8
   doc["di01"] = di01State;
   doc["di02"] = di02State;
@@ -786,7 +786,7 @@ void publishAnalogGroup1() {
     return;
   }
   DynamicJsonDocument doc(256);
-  doc["mac"] = cMacAP;
+  doc["mac"] = cmac_ap;
   // Dados analógicos para dispositivo 1
   doc["ph"] = roundf(ph * 100.0f) / 100.0f;
   doc["orp"] = roundf(orp);
@@ -807,7 +807,7 @@ void publishTemperatures() {
   }
 
   DynamicJsonDocument doc(256);
-  doc["mac"] = cMacAP;
+  doc["mac"] = cmac_ap;
   doc["t1"] = temperatura1;
   //doc["t3"] = temperatura3;
 
@@ -1205,7 +1205,7 @@ void checkSerialCommands() {
     }
 
     const char* macReceived = doc["mac"];
-    if (strcmp(macReceived, cMacAP) == 0) {
+    if (strcmp(macReceived, cmac_ap) == 0) {
       if (doc.containsKey("ssid")) updateWifiSSIDInEEPROM(String(doc["ssid"]).c_str());
       if (doc.containsKey("senha")) updateWifiPassInEEPROM(String(doc["senha"]).c_str());
       if (doc.containsKey("mqtt_server")) updateMqttServerInEEPROM(String(doc["mqtt_server"]).c_str());
