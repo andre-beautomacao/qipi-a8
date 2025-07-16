@@ -1,6 +1,10 @@
 # Changelog
 
 
+## 2025-07-16 16:42 BRT
+- Criada a task `TaskFirmwareUpdate` para baixar e aplicar o firmware em segundo plano quando recebido `qipi/update`.
+
+
 
 ## 2025-07-16 15:10 BRT
 - Firmware OTA agora é baixado diretamente para a flash sem usar LittleFS, evitando erros de espaço insuficiente.
