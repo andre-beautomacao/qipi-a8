@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 2025-07-16 14:27 BRT
+- Removido o arquivo de firmware do LittleFS antes do download e apos uma atualizacao OTA bem-sucedida para evitar falta de espaco.
+
 ## 2025-07-16 13:59 BRT
 - Corrigida declaracao de `cmac_ap` com tamanho fixo para uso de `sizeof()`.
 
