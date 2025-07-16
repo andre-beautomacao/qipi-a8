@@ -2,6 +2,10 @@
 
 
 
+## 2025-07-16 15:10 BRT
+- Firmware OTA agora é baixado diretamente para a flash sem usar LittleFS, evitando erros de espaço insuficiente.
+
+
 ## 2025-07-16 14:53 BRT
 - Limpeza de todos os arquivos do LittleFS antes do download OTA para evitar falta de espaço.
 
