@@ -1,0 +1,36 @@
+# Changelog
+
+
+## 2025-07-04 18:23 UTC
+- Corrigido caminho remoto do OTA para o usuário `andre-beautomacao`.
+- Arquivo binário permanece como `qipi-a8.bin`.
+
+## 2025-07-04 18:18 UTC
+- Atualizado diretório remoto para OTA.
+- Arquivo binário agora se chama `qipi-a8.bin`.
+
+## 2025-07-04 14:03 UTC
+- Criação do arquivo `README.md` com o histórico de versões.
+
+## 2025-07-04 17:29 UTC
+- Simplificado para 8 entradas digitais, 2 analógicas e 1 sensor de temperatura.
+- Removidas funções e rotas referentes ao segundo grupo de entradas.
+
+## 2025-07-04 14:01 UTC
+- Padronização das mensagens de log.
+- Inclusão de categorias nas mensagens de log.
+
+## 2025-07-03 14:39 UTC
+- Adicionado "external linkage" para URL.
+- Incluso cabeçalho ETH no servidor web.
+
+## 2025-07-02 20:17 UTC
+- URL de IP público acessível globalmente.
+- Adicionado arquivo de configuração Ethernet.
+- Definidos sensores globais como `extern`.
+- Refatoração do código em módulos (rede, MQTT e servidor web).
+- Inclusos cabeçalhos WiFi e Ethernet.
+- Definições Ethernet PHY movidas para cabeçalho.
+
+## 2025-07-02 14:50 UTC
+- Versão inicial carregada para o repositório.
