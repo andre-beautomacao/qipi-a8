@@ -15,7 +15,6 @@
 #include <WiFiClientSecure.h>
 #include <AsyncMqttClient.h>
 #include "ESPAsyncWebServer.h"
-#include "LittleFS.h"
 #include "PCF8574.h"
 #include <LiquidCrystal_I2C.h>
 #include <OneWire.h>
@@ -318,8 +317,7 @@ void verificarConexoes();
 void WiFiEvent(WiFiEvent_t event);
 void publishDigitalGroup1();
 void publishAnalogGroup1();
-void getFileFromServer();
-void performOTAUpdateFromLittleFS();
+void updateFirmwareFromServer();
 void onOTAStart();
 void onOTAProgress(size_t current, size_t final);
 void onOTAEnd(bool success);
@@ -821,78 +819,76 @@ void publishTemperatures() {
 /***************************************************************
  *  OTA e Download
  ***************************************************************/
-void getFileFromServer() {
+void updateFirmwareFromServer() {
   WiFiClientSecure client;
   client.setInsecure();
-  if (client.connect(REMOTEHOST, REMOTEPORT)) {
-    LOG_OTA("Connected to server");
-    client.print("GET " + String(REMOTEPATH) + " HTTP/1.1\r\n");
-    client.print("Host: " + String(REMOTEHOST) + "\r\n");
-    client.println("Connection: close\r\n");
-    client.println();
-    File file = LittleFS.open("/" + String(FILE_NAME), FILE_WRITE);
-    if (!file) {
-      LOG_OTA("Failed to open file for writing");
-      return;
-    }
-    bool endOfHeaders = false;
-    String headers = "";
-    String http_response_code = "error";
-    const size_t bufferSize = 1024;
-    uint8_t buffer[bufferSize];
-    while (client.connected() && !endOfHeaders) {
-      if (client.available()) {
-        char c = client.read();
-        headers += c;
-        if (headers.startsWith("HTTP/1.1")) {
-          http_response_code = headers.substring(9, 12);
-        }
-        if (headers.endsWith("\r\n\r\n")) {
-          endOfHeaders = true;
-        }
-      }
-    }
-    LOG_OTA("HTTP response code: " + http_response_code);
-    while (client.connected()) {
-      if (client.available()) {
-        size_t bytesRead = client.readBytes(buffer, bufferSize);
-        file.write(buffer, bytesRead);
-      }
-    }
-    file.close();
-    client.stop();
-    LOG_OTA("File saved successfully");
-  } else {
-    LOG_OTA("Failed to connect to server");
-  }
-}
 
-void performOTAUpdateFromLittleFS() {
-  File file = LittleFS.open("/" + String(FILE_NAME), FILE_READ);
-  if (!file) {
-    LOG_OTA("Failed to open file for reading");
+  if (!client.connect(REMOTEHOST, REMOTEPORT)) {
+    LOG_OTA("Failed to connect to server");
     return;
   }
-  LOG_OTA("Starting update..");
-  size_t fileSize = file.size();
-  LOG_OTA(String(fileSize));
-  if (!Update.begin(fileSize, U_FLASH)) {
-    LOG_OTA("Cannot do the update");
-    file.close();
+
+  client.print(String("GET ") + REMOTEPATH + " HTTP/1.1\r\n");
+  client.print(String("Host: ") + REMOTEHOST + "\r\n");
+  client.println("Connection: close\r\n");
+  client.println();
+
+  bool inHeaders = true;
+  int contentLength = 0;
+  String line;
+  while (client.connected() && inHeaders) {
+    if (client.available()) {
+      line = client.readStringUntil('\n');
+      line.trim();
+      if (line.length() == 0) {
+        inHeaders = false;
+      } else if (line.startsWith("Content-Length:")) {
+        contentLength = line.substring(strlen("Content-Length:")).toInt();
+      }
+    } else {
+      delay(1);
+    }
+  }
+
+  if (contentLength <= 0) {
+    LOG_OTA("Invalid firmware size");
+    client.stop();
     return;
   }
-  Update.writeStream(file);
+
+  if (!Update.begin(contentLength)) {
+    LOG_OTA("Update.begin failed");
+    client.stop();
+    return;
+  }
+
+  const size_t buffSize = 1024;
+  uint8_t buff[buffSize];
+  int written = 0;
+  while (client.connected() && written < contentLength) {
+    if (client.available()) {
+      size_t toRead = client.available() > buffSize ? buffSize : client.available();
+      int bytesRead = client.readBytes(buff, toRead);
+      Update.write(buff, bytesRead);
+      written += bytesRead;
+    } else {
+      delay(1);
+    }
+  }
+
   if (Update.end()) {
-    LOG_OTA("Successful update");
+    LOG_OTA("OTA update successful");
   } else {
-    LOG_OTA("Error Occurred: " + String(Update.getError()));
-    file.close();
+    LOG_OTA("OTA update failed");
+    Update.printError(Serial);
+    client.stop();
     return;
   }
-  file.close();
+
+  client.stop();
   LOG_OTA("Reset in 4 seconds....");
   delay(4000);
-  ETH.end();  // libera o driver
+  ETH.end();
   delay(100);
   ESP.restart();
 }
@@ -1234,9 +1230,6 @@ void setup() {
   //systemStartMillis = millis();
   Serial.begin(115200);
   setupEEPROM();
-  if (!LittleFS.begin(true)) {
-    LOG_OTA("Erro ao montar LittleFS");
-  }
 
   beginConnection();
   delay(5000);

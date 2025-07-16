@@ -6,7 +6,6 @@
 #include <HTTPClient.h>
 #include <WiFiClient.h>
 #include <ArduinoJson.h>
-#include <LittleFS.h>
 #include "PCF8574.h"
 
 // Extern globals from main sketch
@@ -39,8 +38,7 @@ extern String last_ip;
 // Functions defined elsewhere
 extern void publishDigitalGroup1();
 extern void publishAnalogGroup1();
-extern void getFileFromServer();
-extern void performOTAUpdateFromLittleFS();
+extern void updateFirmwareFromServer();
 extern void updateWifiSSIDInEEPROM(const char* novoSSID);
 extern void updateWifiPassInEEPROM(const char* novaSenha);
 extern void updateMqttServerInEEPROM(const char* newServer);
@@ -342,10 +340,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     if (strcmp(topic, "qipi/update") == 0) {
       LOG_OTA("Nova atualização disponível");
       delay(2000);
-      LOG_OTA("Baixando arquivo...");
-      getFileFromServer();
-      LOG_OTA("Atualizando...");
-      performOTAUpdateFromLittleFS();
+      LOG_OTA("Baixando e atualizando...");
+      updateFirmwareFromServer();
     } else if (strcmp(topic, "qipi/restart") == 0) {
       LOG_OTA("Reiniciando dispositivo...");
       ETH.end();
