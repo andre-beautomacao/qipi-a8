@@ -1,6 +1,7 @@
 # Changelog
 
 
+
 ## 2025-07-16 14:53 BRT
 - Limpeza de todos os arquivos do LittleFS antes do download OTA para evitar falta de espaço.
 

@@ -834,6 +834,7 @@ void getFileFromServer() {
     }
     root.close();
   }
+
   if (client.connect(REMOTEHOST, REMOTEPORT)) {
     LOG_OTA("Connected to server");
     client.print("GET " + String(REMOTEPATH) + " HTTP/1.1\r\n");
