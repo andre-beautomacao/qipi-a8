@@ -39,6 +39,7 @@ extern String last_ip;
 extern void publishDigitalGroup1();
 extern void publishAnalogGroup1();
 extern void updateFirmwareFromServer();
+extern void TaskFirmwareUpdate(void* pvParameters);
 extern void updateWifiSSIDInEEPROM(const char* novoSSID);
 extern void updateWifiPassInEEPROM(const char* novaSenha);
 extern void updateMqttServerInEEPROM(const char* newServer);
@@ -339,9 +340,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   if (strcmp(macReceived, cmac_ap) == 0) {
     if (strcmp(topic, "qipi/update") == 0) {
       LOG_OTA("Nova atualização disponível");
-      delay(2000);
-      LOG_OTA("Baixando e atualizando...");
-      updateFirmwareFromServer();
+      xTaskCreatePinnedToCore(TaskFirmwareUpdate, "FirmwareUpdate", 8192, NULL, 3, NULL, 1);
     } else if (strcmp(topic, "qipi/restart") == 0) {
       LOG_OTA("Reiniciando dispositivo...");
       ETH.end();
