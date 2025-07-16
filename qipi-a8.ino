@@ -831,6 +831,23 @@ void updateFirmwareFromServer() {
   client.println("Connection: close\r\n");
   client.println();
 
+  // Read the HTTP status line
+  String statusLine = client.readStringUntil('\n');
+  statusLine.trim();
+  int statusCode = 0;
+  if (statusLine.startsWith("HTTP/")) {
+    int firstSpace = statusLine.indexOf(' ');
+    int secondSpace = statusLine.indexOf(' ', firstSpace + 1);
+    if (firstSpace > 0 && secondSpace > firstSpace) {
+      statusCode = statusLine.substring(firstSpace + 1, secondSpace).toInt();
+    }
+  }
+  if (statusCode != 200) {
+    LOG_PRINTF("[OTA] HTTP status: %s\n", statusLine.c_str());
+    client.stop();
+    return;
+  }
+
   bool inHeaders = true;
   int contentLength = 0;
   String line;

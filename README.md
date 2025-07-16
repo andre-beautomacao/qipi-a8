@@ -1,5 +1,9 @@
 # Changelog
 
+## 2025-07-16 16:53 BRT
+- Verifica o status HTTP do firmware durante o download; se não for 200, a atualização é abortada.
+
+
 ## 2025-07-16 16:50 BRT
 - Removida `TaskOTA` e a biblioteca `ElegantOTA` por não utilizar mais OTA via web.
 
