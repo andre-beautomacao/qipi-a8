@@ -877,15 +877,15 @@ void updateFirmwareFromServer() {
   }
 
   if (Update.end()) {
+
     LOG_OTA("OTA update successful");
+
   } else {
     LOG_OTA("OTA update failed");
     Update.printError(Serial);
     client.stop();
     return;
   }
-
-  client.stop();
   LOG_OTA("Reset in 4 seconds....");
   delay(4000);
   ETH.end();
